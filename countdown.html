@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Countdown zum Treffpunkt</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #000;
+      color: #fff;
+      text-align: center;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 40px;
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px #fff;
+    }
+
+    #countdown {
+      font-size: 4em;
+      font-weight: bold;
+      padding: 20px 40px;
+      border: 2px solid #fff;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.2);
+      transition: all 0.15s ease-in-out;
+    }
+
+    .flash {
+      color: #ff3030;
+      text-shadow: 0 0 30px #ff3030;
+      box-shadow: 0 0 35px #ff3030;
+      transform: scale(1.05);
+    }
+
+    #adresse {
+      display: none;
+      font-size: 2em;
+      font-weight: bold;
+      line-height: 1.6em;
+      text-transform: uppercase;
+      white-space: pre-line;
+      padding: 30px 40px;
+      border-radius: 10px;
+      background-color: #111;
+      box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
+    }
+
+    #map {
+      display: none;
+      margin-top: 40px;
+      border: 2px solid #444;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown bis zur Adressfreigabe</h1>
+  <div id="countdown"></div>
+
+  <div id="adresse">
+    📍 TREFFPUNKT 17:45 UHR<br>
+    GOTTLOB-HUMMEL-STRASSE 1<br>
+    72458 ALBSTADT EBINGEN<br>
+    PARKPLATZ HONEYWELL GEBÄUDE
+  </div>
+
+  <iframe
+    id="map"
+    width="600"
+    height="450"
+    style="border:0"
+    loading="lazy"
+    allowfullscreen
+    referrerpolicy="no-referrer-when-downgrade"
+    src="https://www.google.com/maps?q=48.2165719,9.0279886&hl=de&z=17&output=embed">
+  </iframe>
+
+  <script>
+    // Zielzeit: 13. November 2025, 15:00 Uhr (lokale Zeit)
+    const targetDate = new Date("November 13, 2025 15:00:00").getTime();
+    const countdownEl = document.getElementById("countdown");
+
+    let lastSeconds = null;
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+
+      if (distance > 0) {
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        countdownEl.innerHTML =
+          `${hours.toString().padStart(2, '0')}:${minutes
+            .toString()
+            .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+        if (seconds !== lastSeconds) {
+          countdownEl.classList.add("flash");
+          setTimeout(() => countdownEl.classList.remove("flash"), 150);
+          lastSeconds = seconds;
+        }
+      } else {
+        clearInterval(timer);
+        countdownEl.style.display = "none";
+        document.getElementById("adresse").style.display = "block";
+        document.getElementById("map").style.display = "block";
+      }
+    }, 200);
+  </script>
+</body>
+</html>
